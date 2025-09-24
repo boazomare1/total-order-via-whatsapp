@@ -229,12 +229,5 @@ override_whitelisted_methods = {
 	# Date and Product APIs
 	"whatsapp_integration.api.get_orders_by_date": "whatsapp_integration.api.get_orders_by_date",
 	"whatsapp_integration.api.get_order_products": "whatsapp_integration.api.get_order_products",
-	"whatsapp_integration.api.get_daily_order_summary": "whatsapp_integration.api.get_daily_order_summary",
-	
-	# Product and Variant Management APIs
-	"whatsapp_integration.api.get_product_variants": "whatsapp_integration.api.get_product_variants",
-	"whatsapp_integration.api.get_products_menu": "whatsapp_integration.api.get_products_menu",
-	"whatsapp_integration.api.get_variant_details": "whatsapp_integration.api.get_variant_details",
-	"whatsapp_integration.api.create_order_with_variant": "whatsapp_integration.api.create_order_with_variant",
-	"whatsapp_integration.api.get_order_with_pricing": "whatsapp_integration.api.get_order_with_pricing"
+	"whatsapp_integration.api.get_daily_order_summary": "whatsapp_integration.api.get_daily_order_summary"
 }

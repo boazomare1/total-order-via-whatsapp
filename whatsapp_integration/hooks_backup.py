@@ -5,6 +5,22 @@ app_description = "Integrating Whatsapp with Erpnext"
 app_email = "totalenergies@techsavanna.com"
 app_license = "mit"
 
+# Apps
+# ------------------
+
+# required_apps = []
+
+# Each item in the list will be shown as an app in the apps page
+# add_to_apps_screen = [
+# 	{
+# 		"name": "whatsapp_integration",
+# 		"logo": "/assets/whatsapp_integration/logo.png",
+# 		"title": "Whatsapp Integration",
+# 		"route": "/whatsapp_integration",
+# 		"has_permission": "whatsapp_integration.api.permission.has_app_permission"
+# 	}
+# ]
+
 # Includes in <head>
 # ------------------
 
@@ -32,6 +48,11 @@ app_license = "mit"
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
+# Svg Icons
+# ------------------
+# include app icons in desk
+# app_include_icons = "whatsapp_integration/public/icons.svg"
+
 # Home Pages
 # ----------
 
@@ -40,7 +61,7 @@ app_license = "mit"
 
 # website user home page (by Role)
 # role_home_page = {
-#	"Role": "home_page"
+# 	"Role": "home_page"
 # }
 
 # Generators
@@ -54,8 +75,8 @@ app_license = "mit"
 
 # add methods and filters to jinja environment
 # jinja = {
-#	"methods": "whatsapp_integration.utils.jinja_methods",
-#	"filters": "whatsapp_integration.utils.jinja_filters"
+# 	"methods": "whatsapp_integration.utils.jinja_methods",
+# 	"filters": "whatsapp_integration.utils.jinja_filters"
 # }
 
 # Installation
@@ -65,10 +86,26 @@ app_license = "mit"
 # after_install = "whatsapp_integration.install.after_install"
 
 # Uninstallation
-# --------------
+# ------------
 
 # before_uninstall = "whatsapp_integration.uninstall.before_uninstall"
 # after_uninstall = "whatsapp_integration.uninstall.after_uninstall"
+
+# Integration Setup
+# ------------------
+# To set up dependencies/integrations with other apps
+# Name of the app being installed is passed as an argument
+
+# before_app_install = "whatsapp_integration.utils.before_app_install"
+# after_app_install = "whatsapp_integration.utils.after_app_install"
+
+# Integration Cleanup
+# -------------------
+# To clean up dependencies/integrations with other apps
+# Name of the app being uninstalled is passed as an argument
+
+# before_app_uninstall = "whatsapp_integration.utils.before_app_uninstall"
+# after_app_uninstall = "whatsapp_integration.utils.after_app_uninstall"
 
 # Desk Notifications
 # ------------------
@@ -81,11 +118,11 @@ app_license = "mit"
 # Permissions evaluated in scripted ways
 
 # permission_query_conditions = {
-#	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
+# 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
 # }
 #
 # has_permission = {
-#	"Event": "frappe.desk.doctype.event.event.has_permission",
+# 	"Event": "frappe.desk.doctype.event.event.has_permission",
 # }
 
 # DocType Class
@@ -93,7 +130,7 @@ app_license = "mit"
 # Override standard doctype classes
 
 # override_doctype_class = {
-#	"ToDo": "custom_app.overrides.CustomToDo"
+# 	"ToDo": "custom_app.overrides.CustomToDo"
 # }
 
 # Document Events
@@ -101,32 +138,32 @@ app_license = "mit"
 # Hook on document methods and events
 
 # doc_events = {
-#	"*": {
-#		"on_update": "method",
-#		"on_cancel": "method",
-#		"on_trash": "method"
-#	}
+# 	"*": {
+# 		"on_update": "method",
+# 		"on_cancel": "method",
+# 		"on_trash": "method"
+# 	}
 # }
 
 # Scheduled Tasks
 # ---------------
 
 # scheduler_events = {
-#	"all": [
-#		"whatsapp_integration.tasks.all"
-#	],
-#	"daily": [
-#		"whatsapp_integration.tasks.daily"
-#	],
-#	"hourly": [
-#		"whatsapp_integration.tasks.hourly"
-#	],
-#	"weekly": [
-#		"whatsapp_integration.tasks.weekly"
-#	],
-#	"monthly": [
-#		"whatsapp_integration.tasks.monthly"
-#	],
+# 	"all": [
+# 		"whatsapp_integration.tasks.all"
+# 	],
+# 	"daily": [
+# 		"whatsapp_integration.tasks.daily"
+# 	],
+# 	"hourly": [
+# 		"whatsapp_integration.tasks.hourly"
+# 	],
+# 	"weekly": [
+# 		"whatsapp_integration.tasks.weekly"
+# 	],
+# 	"monthly": [
+# 		"whatsapp_integration.tasks.monthly"
+# 	],
 # }
 
 # Testing
@@ -138,14 +175,14 @@ app_license = "mit"
 # ------------------------------
 #
 # override_whitelisted_methods = {
-#	"frappe.desk.doctype.event.event.get_events": "whatsapp_integration.event.get_events"
+# 	"frappe.desk.doctype.event.event.get_events": "whatsapp_integration.event.get_events"
 # }
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
 # along with any modifications made in other Frappe apps
 # override_doctype_dashboards = {
-#	"Task": "whatsapp_integration.task.get_dashboard_data"
+# 	"Task": "whatsapp_integration.task.get_dashboard_data"
 # }
 
 # exempt linked doctypes from being automatically cancelled
@@ -171,43 +208,39 @@ app_license = "mit"
 # --------------------
 
 # user_data_fields = [
-#	{
-#		"doctype": "{doctype_1}",
-#		"filter_by": "{filter_by}",
-#		"redact_fields": ["{field_1}", "{field_2}"],
-#		"partial": 1,
-#	},
-#	{
-#		"doctype": "{doctype_2}",
-#		"filter_by": "{filter_by}",
-#		"partial": 1,
-#	},
-#	{
-#		"doctype": "{doctype_3}",
-#		"strict": False,
-#	},
-#	{
-#		"doctype": "{doctype_4}"
-#	}
+# 	{
+# 		"doctype": "{doctype_1}",
+# 		"filter_by": "{filter_by}",
+# 		"redact_fields": ["{field_1}", "{field_2}"],
+# 		"partial": 1,
+# 	},
+# 	{
+# 		"doctype": "{doctype_2}",
+# 		"filter_by": "{filter_by}",
+# 		"partial": 1,
+# 	},
+# 	{
+# 		"doctype": "{doctype_3}",
+# 		"strict": False,
+# 	},
+# 	{
+# 		"doctype": "{doctype_4}"
+# 	}
 # ]
 
 # Authentication and authorization
 # --------------------------------
 
 # auth_hooks = [
-#	"whatsapp_integration.auth.validate"
+# 	"whatsapp_integration.auth.validate"
 # ]
 
-# Translation
-# --------------------------------
+# Automatically update python controller files with type annotations for this app.
+# export_python_type_annotations = True
 
-# Make link fields search translated document names for these DocTypes
-# Recommended only for DocTypes which have limited documents with untranslated names
-# For example: Role, Gender, etc.
-# translated_search_doctypes = []
-
-# Automatically update python controller files with all translated strings
-# get_translated_strings = "whatsapp_integration.utils.get_translated_strings"
+# default_log_clearing_doctypes = {
+# 	"Logging DocType Name": 30  # days to retain logs
+# }
 
 # WhatsApp API endpoints
 # ---------------------
@@ -229,12 +262,15 @@ override_whitelisted_methods = {
 	# Date and Product APIs
 	"whatsapp_integration.api.get_orders_by_date": "whatsapp_integration.api.get_orders_by_date",
 	"whatsapp_integration.api.get_order_products": "whatsapp_integration.api.get_order_products",
-	"whatsapp_integration.api.get_daily_order_summary": "whatsapp_integration.api.get_daily_order_summary",
-	
+	"whatsapp_integration.api.get_daily_order_summary": "whatsapp_integration.api.get_daily_order_summary"
+
+
 	# Product and Variant Management APIs
 	"whatsapp_integration.api.get_product_variants": "whatsapp_integration.api.get_product_variants",
 	"whatsapp_integration.api.get_products_menu": "whatsapp_integration.api.get_products_menu",
 	"whatsapp_integration.api.get_variant_details": "whatsapp_integration.api.get_variant_details",
 	"whatsapp_integration.api.create_order_with_variant": "whatsapp_integration.api.create_order_with_variant",
 	"whatsapp_integration.api.get_order_with_pricing": "whatsapp_integration.api.get_order_with_pricing"
+
+
 }

@@ -1,0 +1,338 @@
+{
+	"info": {
+		"_postman_id": "working-whatsapp-apis",
+		"name": "WORKING WhatsApp APIs - Direct Resource Only",
+		"description": "This collection contains ONLY the APIs that actually work - Direct Resource APIs. All whitelisted method APIs are broken and have been removed.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "WhatsApp Orders",
+			"item": [
+				{
+					"name": "Create Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token a83482f9033d39e:f1c1ab82164f22a",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customer_name\": \"John Doe\",\n  \"phone_number\": \"254712345678\",\n  \"item\": \"Pizza\",\n  \"item_code\": \"PIZZA-001\",\n  \"variant_id\": \"Pizza Margherita - Large\",\n  \"variant_name\": \"Pizza Margherita - Large\",\n  \"quantity\": 2,\n  \"unit_price\": 1200,\n  \"currency\": \"KES\",\n  \"delivery_address\": \"123 Main Street\"\n}"
+						},
+						"url": {
+							"raw": "http://totalwhatsapporder.local:8002/api/resource/WhatsApp%20Order",
+							"protocol": "http",
+							"host": [
+								"totalwhatsapporder",
+								"local"
+							],
+							"port": "8002",
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp%20Order"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get All Orders",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token a83482f9033d39e:f1c1ab82164f22a",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://totalwhatsapporder.local:8002/api/resource/WhatsApp%20Order",
+							"protocol": "http",
+							"host": [
+								"totalwhatsapporder",
+								"local"
+							],
+							"port": "8002",
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp%20Order"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Order by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token a83482f9033d39e:f1c1ab82164f22a",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://totalwhatsapporder.local:8002/api/resource/WhatsApp%20Order/WOR-2025-00013",
+							"protocol": "http",
+							"host": [
+								"totalwhatsapporder",
+								"local"
+							],
+							"port": "8002",
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp%20Order",
+								"WOR-2025-00013"
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Order Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token a83482f9033d39e:f1c1ab82164f22a",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"order_status\": \"Confirmed\"\n}"
+						},
+						"url": {
+							"raw": "http://totalwhatsapporder.local:8002/api/resource/WhatsApp%20Order/WOR-2025-00013",
+							"protocol": "http",
+							"host": [
+								"totalwhatsapporder",
+								"local"
+							],
+							"port": "8002",
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp%20Order",
+								"WOR-2025-00013"
+							]
+						}
+					}
+				},
+				{
+					"name": "Filter Orders by Phone",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token a83482f9033d39e:f1c1ab82164f22a",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://totalwhatsapporder.local:8002/api/resource/WhatsApp%20Order?filters=[[\"WhatsApp Order\",\"phone_number\",\"=\",\"254712345678\"]]",
+							"protocol": "http",
+							"host": [
+								"totalwhatsapporder",
+								"local"
+							],
+							"port": "8002",
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp%20Order"
+							],
+							"query": [
+								{
+									"key": "filters",
+									"value": "[[\"WhatsApp Order\",\"phone_number\",\"=\",\"254712345678\"]]"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Filter Orders by Date",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token a83482f9033d39e:f1c1ab82164f22a",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://totalwhatsapporder.local:8002/api/resource/WhatsApp%20Order?filters=[[\"WhatsApp Order\",\"creation\",\"between\",[\"2025-09-25 00:00:00\",\"2025-09-25 23:59:59\"]]]",
+							"protocol": "http",
+							"host": [
+								"totalwhatsapporder",
+								"local"
+							],
+							"port": "8002",
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp%20Order"
+							],
+							"query": [
+								{
+									"key": "filters",
+									"value": "[[\"WhatsApp Order\",\"creation\",\"between\",[\"2025-09-25 00:00:00\",\"2025-09-25 23:59:59\"]]]"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "WhatsApp Product Variants",
+			"item": [
+				{
+					"name": "Get All Variants",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token a83482f9033d39e:f1c1ab82164f22a",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://totalwhatsapporder.local:8002/api/resource/WhatsApp%20Product%20Variant",
+							"protocol": "http",
+							"host": [
+								"totalwhatsapporder",
+								"local"
+							],
+							"port": "8002",
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp%20Product%20Variant"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Variant Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token a83482f9033d39e:f1c1ab82164f22a",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://totalwhatsapporder.local:8002/api/resource/WhatsApp%20Product%20Variant/Pizza%20Margherita%20-%20Large",
+							"protocol": "http",
+							"host": [
+								"totalwhatsapporder",
+								"local"
+							],
+							"port": "8002",
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp%20Product%20Variant",
+								"Pizza%20Margherita%20-%20Large"
+							]
+						}
+					}
+				},
+				{
+					"name": "Create New Variant",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token a83482f9033d39e:f1c1ab82164f22a",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"product_name\": \"Test Product\",\n  \"variant_name\": \"Test Variant - Large\",\n  \"item_code\": \"TEST-001\",\n  \"unit_price\": 500,\n  \"currency\": \"KES\",\n  \"stock_quantity\": 10,\n  \"is_available\": true\n}"
+						},
+						"url": {
+							"raw": "http://totalwhatsapporder.local:8002/api/resource/WhatsApp%20Product%20Variant",
+							"protocol": "http",
+							"host": [
+								"totalwhatsapporder",
+								"local"
+							],
+							"port": "8002",
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp%20Product%20Variant"
+							]
+						}
+					}
+				},
+				{
+					"name": "Filter Variants by Product",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token a83482f9033d39e:f1c1ab82164f22a",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://totalwhatsapporder.local:8002/api/resource/WhatsApp%20Product%20Variant?filters=[[\"WhatsApp Product Variant\",\"product_name\",\"like\",\"%Pizza%\"]]",
+							"protocol": "http",
+							"host": [
+								"totalwhatsapporder",
+								"local"
+							],
+							"port": "8002",
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp%20Product%20Variant"
+							],
+							"query": [
+								{
+									"key": "filters",
+									"value": "[[\"WhatsApp Product Variant\",\"product_name\",\"like\",\"%Pizza%\"]]"
+								}
+							]
+						}
+					}
+				}
+			]
+		}
+	]
+}

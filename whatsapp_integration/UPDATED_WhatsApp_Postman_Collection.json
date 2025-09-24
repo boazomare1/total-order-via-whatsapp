@@ -1,0 +1,586 @@
+{
+	"info": {
+		"_postman_id": "whatsapp-integration-enhanced",
+		"name": "WhatsApp Integration - Enhanced APIs",
+		"description": "Complete WhatsApp Integration API collection with date filtering and product details",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Environment Setup",
+			"item": [
+				{
+					"name": "Set Variables",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Set environment variables for easy testing",
+									"pm.environment.set('base_url', 'http://totalwhatsapporder.local:8002');",
+									"pm.environment.set('auth_token', 'a83482f9033d39e:f1c1ab82164f22a');",
+									"pm.environment.set('test_order_id', 'WOR-2025-00011');",
+									"pm.environment.set('test_phone', '254799999999');",
+									"pm.environment.set('test_date', '2025-09-24');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/method/whatsapp_integration.api.test_order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"method",
+								"whatsapp_integration.api.test_order"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Core Order APIs",
+			"item": [
+				{
+					"name": "Create WhatsApp Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token {{auth_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"naming_series\": \"WOR-.YYYY.-.#####\",\n  \"customer_name\": \"John Doe\",\n  \"phone_number\": \"254712345678\",\n  \"item\": \"Pizza Margherita\",\n  \"quantity\": 2,\n  \"delivery_address\": \"123 Main Street, Nairobi\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/resource/WhatsApp%20Order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp Order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Order",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/resource/WhatsApp%20Order/{{test_order_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp Order",
+								"{{test_order_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Orders by Phone Number",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/resource/WhatsApp%20Order?filters=%5B%5B%22phone_number%22%2C%22%3D%22%2C%22{{test_phone}}%22%5D%5D",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp Order"
+							],
+							"query": [
+								{
+									"key": "filters",
+									"value": "[[\"phone_number\",\"=\",\"{{test_phone}}\"]]"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Order Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token {{auth_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"order_status\": \"Confirmed\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/resource/WhatsApp%20Order/{{test_order_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp Order",
+								"{{test_order_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Date Filtering APIs",
+			"item": [
+				{
+					"name": "Get Orders by Date",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/method/whatsapp_integration.api.get_orders_by_date?date={{test_date}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"method",
+								"whatsapp_integration.api.get_orders_by_date"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "{{test_date}}",
+									"description": "Format: YYYY-MM-DD"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Orders by Date Range",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/method/whatsapp_integration.api.get_orders_by_date?date_from=2025-09-20&date_to=2025-09-24",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"method",
+								"whatsapp_integration.api.get_orders_by_date"
+							],
+							"query": [
+								{
+									"key": "date_from",
+									"value": "2025-09-20",
+									"description": "Start date (YYYY-MM-DD)"
+								},
+								{
+									"key": "date_to",
+									"value": "2025-09-24",
+									"description": "End date (YYYY-MM-DD)"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Daily Order Summary",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/method/whatsapp_integration.api.get_daily_order_summary?date={{test_date}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"method",
+								"whatsapp_integration.api.get_daily_order_summary"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "{{test_date}}",
+									"description": "Format: YYYY-MM-DD"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product APIs",
+			"item": [
+				{
+					"name": "Get Order Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/method/whatsapp_integration.api.get_order_products?order_id={{test_order_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"method",
+								"whatsapp_integration.api.get_order_products"
+							],
+							"query": [
+								{
+									"key": "order_id",
+									"value": "{{test_order_id}}",
+									"description": "Order ID (e.g., WOR-2025-00001)"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Customer Management APIs",
+			"item": [
+				{
+					"name": "Get Customer Orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/method/whatsapp_integration.api.get_customer_orders?phone_number={{test_phone}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"method",
+								"whatsapp_integration.api.get_customer_orders"
+							],
+							"query": [
+								{
+									"key": "phone_number",
+									"value": "{{test_phone}}",
+									"description": "Customer phone number"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/method/whatsapp_integration.api.get_order_status?order_id={{test_order_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"method",
+								"whatsapp_integration.api.get_order_status"
+							],
+							"query": [
+								{
+									"key": "order_id",
+									"value": "{{test_order_id}}",
+									"description": "Order ID to check"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Order Status (API)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"order_id\": \"{{test_order_id}}\",\n  \"new_status\": \"Preparing\",\n  \"notes\": \"Order is being prepared\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/method/whatsapp_integration.api.update_order_status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"method",
+								"whatsapp_integration.api.update_order_status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"order_id\": \"{{test_order_id}}\",\n  \"reason\": \"Customer requested cancellation\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/method/whatsapp_integration.api.cancel_order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"method",
+								"whatsapp_integration.api.cancel_order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/method/whatsapp_integration.api.get_order_history?phone_number={{test_phone}}&limit=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"method",
+								"whatsapp_integration.api.get_order_history"
+							],
+							"query": [
+								{
+									"key": "phone_number",
+									"value": "{{test_phone}}",
+									"description": "Customer phone number"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Number of orders to retrieve"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/method/whatsapp_integration.api.search_orders?query=pizza&status=Pending",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"method",
+								"whatsapp_integration.api.search_orders"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "pizza",
+									"description": "Search term"
+								},
+								{
+									"key": "status",
+									"value": "Pending",
+									"description": "Filter by status"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Testing APIs",
+			"item": [
+				{
+					"name": "Test Order Creation",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/method/whatsapp_integration.api.test_order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"method",
+								"whatsapp_integration.api.test_order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Simulate WhatsApp Conversation",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/method/whatsapp_integration.api.simulate_whatsapp_conversation",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"method",
+								"whatsapp_integration.api.simulate_whatsapp_conversation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Menu",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/method/whatsapp_integration.api.get_menu",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"method",
+								"whatsapp_integration.api.get_menu"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://totalwhatsapporder.local:8002",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "a83482f9033d39e:f1c1ab82164f22a",
+			"type": "string"
+		},
+		{
+			"key": "test_order_id",
+			"value": "WOR-2025-00011",
+			"type": "string"
+		},
+		{
+			"key": "test_phone",
+			"value": "254799999999",
+			"type": "string"
+		},
+		{
+			"key": "test_date",
+			"value": "2025-09-24",
+			"type": "string"
+		}
+	]
+}

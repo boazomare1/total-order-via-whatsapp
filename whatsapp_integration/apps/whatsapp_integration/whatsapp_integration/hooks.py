@@ -1,3 +1,6 @@
+# Copyright (c) 2024, TCL and contributors
+# For license information, please see license.txt
+
 app_name = "whatsapp_integration"
 app_title = "Whatsapp Integration"
 app_publisher = "TCL"
@@ -152,20 +155,6 @@ app_license = "mit"
 #
 # auto_cancel_exempted_doctypes = ["Auto Repeat"]
 
-# Ignore links to specified DocTypes when deleting documents
-# -----------------------------------------------------------
-
-# ignore_links_on_delete = ["Communication", "ToDo"]
-
-# Request Events
-# ----------------
-# before_request = ["whatsapp_integration.utils.before_request"]
-# after_request = ["whatsapp_integration.utils.after_request"]
-
-# Job Events
-# ----------
-# before_job = ["whatsapp_integration.utils.before_job"]
-# after_job = ["whatsapp_integration.utils.after_job"]
 
 # User Data Protection
 # --------------------
@@ -205,36 +194,3 @@ app_license = "mit"
 # Recommended only for DocTypes which have limited documents with untranslated names
 # For example: Role, Gender, etc.
 # translated_search_doctypes = []
-
-# Automatically update python controller files with all translated strings
-# get_translated_strings = "whatsapp_integration.utils.get_translated_strings"
-
-# WhatsApp API endpoints
-# ---------------------
-override_whitelisted_methods = {
-	# Core WhatsApp functionality
-	"whatsapp_integration.api.whatsapp_webhook": "whatsapp_integration.api.whatsapp_webhook",
-	"whatsapp_integration.api.test_order": "whatsapp_integration.api.test_order",
-	"whatsapp_integration.api.simulate_whatsapp_conversation": "whatsapp_integration.api.simulate_whatsapp_conversation",
-	"whatsapp_integration.api.get_menu": "whatsapp_integration.api.get_menu",
-	
-	# Customer Order Management APIs
-	"whatsapp_integration.api.get_customer_orders": "whatsapp_integration.api.get_customer_orders",
-	"whatsapp_integration.api.get_order_status": "whatsapp_integration.api.get_order_status",
-	"whatsapp_integration.api.update_order_status": "whatsapp_integration.api.update_order_status",
-	"whatsapp_integration.api.cancel_order": "whatsapp_integration.api.cancel_order",
-	"whatsapp_integration.api.get_order_history": "whatsapp_integration.api.get_order_history",
-	"whatsapp_integration.api.search_orders": "whatsapp_integration.api.search_orders",
-	
-	# Date and Product APIs
-	"whatsapp_integration.api.get_orders_by_date": "whatsapp_integration.api.get_orders_by_date",
-	"whatsapp_integration.api.get_order_products": "whatsapp_integration.api.get_order_products",
-	"whatsapp_integration.api.get_daily_order_summary": "whatsapp_integration.api.get_daily_order_summary",
-	
-	# Product and Variant Management APIs
-	"whatsapp_integration.api.get_product_variants": "whatsapp_integration.api.get_product_variants",
-	"whatsapp_integration.api.get_products_menu": "whatsapp_integration.api.get_products_menu",
-	"whatsapp_integration.api.get_variant_details": "whatsapp_integration.api.get_variant_details",
-	"whatsapp_integration.api.create_order_with_variant": "whatsapp_integration.api.create_order_with_variant",
-	"whatsapp_integration.api.get_order_with_pricing": "whatsapp_integration.api.get_order_with_pricing"
-}

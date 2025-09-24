@@ -1,0 +1,594 @@
+{
+	"info": {
+		"_postman_id": "whatsapp-integration-final",
+		"name": "WhatsApp Integration - Complete API Collection",
+		"description": "Complete WhatsApp Integration API collection with all 12 APIs including date filtering and product details",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Environment Setup",
+			"item": [
+				{
+					"name": "Set Variables",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Set environment variables for easy testing",
+									"pm.environment.set('base_url', 'http://totalwhatsapporder.local:8002');",
+									"pm.environment.set('auth_token', 'a83482f9033d39e:f1c1ab82164f22a');",
+									"pm.environment.set('test_order_id', 'WOR-2025-00011');",
+									"pm.environment.set('test_phone', '254799999999');",
+									"pm.environment.set('test_date', '2025-09-24');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/method/whatsapp_integration.api.test_order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"method",
+								"whatsapp_integration.api.test_order"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Core Order APIs (4 APIs)",
+			"item": [
+				{
+					"name": "1. Create WhatsApp Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token {{auth_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"naming_series\": \"WOR-.YYYY.-.#####\",\n  \"customer_name\": \"John Doe\",\n  \"phone_number\": \"254712345678\",\n  \"item\": \"Pizza Margherita\",\n  \"quantity\": 2,\n  \"delivery_address\": \"123 Main Street, Nairobi\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/resource/WhatsApp%20Order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp Order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Get Single Order",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/resource/WhatsApp%20Order/{{test_order_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp Order",
+								"{{test_order_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Get Orders by Phone Number",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/resource/WhatsApp%20Order?filters=%5B%5B%22phone_number%22%2C%22%3D%22%2C%22{{test_phone}}%22%5D%5D",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp Order"
+							],
+							"query": [
+								{
+									"key": "filters",
+									"value": "[[\"phone_number\",\"=\",\"{{test_phone}}\"]]"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Update Order Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token {{auth_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"order_status\": \"Confirmed\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/resource/WhatsApp%20Order/{{test_order_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp Order",
+								"{{test_order_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Date Filtering APIs (3 APIs)",
+			"item": [
+				{
+					"name": "5. Get Orders by Specific Date",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/resource/WhatsApp%20Order?filters=%5B%5B%22creation%22%2C%22between%22%2C%5B%22{{test_date}}%2000%3A00%3A00%22%2C%22{{test_date}}%2023%3A59%3A59%22%5D%5D%5D&fields=%5B%22name%22%2C%22customer_name%22%2C%22item%22%2C%22quantity%22%2C%22order_status%22%2C%22creation%22%2C%22phone_number%22%5D",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp Order"
+							],
+							"query": [
+								{
+									"key": "filters",
+									"value": "[[\"creation\",\"between\",[\"{{test_date}} 00:00:00\",\"{{test_date}} 23:59:59\"]]]",
+									"description": "Get orders for specific date"
+								},
+								{
+									"key": "fields",
+									"value": "[\"name\",\"customer_name\",\"item\",\"quantity\",\"order_status\",\"creation\",\"phone_number\"]",
+									"description": "Fields to return"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6. Get Orders by Date Range",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/resource/WhatsApp%20Order?filters=%5B%5B%22creation%22%2C%22between%22%2C%5B%222025-09-20%2000%3A00%3A00%22%2C%222025-09-24%2023%3A59%3A59%22%5D%5D%5D&fields=%5B%22name%22%2C%22customer_name%22%2C%22item%22%2C%22quantity%22%2C%22order_status%22%2C%22creation%22%5D",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp Order"
+							],
+							"query": [
+								{
+									"key": "filters",
+									"value": "[[\"creation\",\"between\",[\"2025-09-20 00:00:00\",\"2025-09-24 23:59:59\"]]]",
+									"description": "Date range filter"
+								},
+								{
+									"key": "fields",
+									"value": "[\"name\",\"customer_name\",\"item\",\"quantity\",\"order_status\",\"creation\"]",
+									"description": "Fields to return"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7. Get Daily Order Summary",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/resource/WhatsApp%20Order?filters=%5B%5B%22creation%22%2C%22between%22%2C%5B%22{{test_date}}%2000%3A00%3A00%22%2C%22{{test_date}}%2023%3A59%3A59%22%5D%5D%5D&fields=%5B%22name%22%2C%22item%22%2C%22quantity%22%2C%22order_status%22%5D",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp Order"
+							],
+							"query": [
+								{
+									"key": "filters",
+									"value": "[[\"creation\",\"between\",[\"{{test_date}} 00:00:00\",\"{{test_date}} 23:59:59\"]]]",
+									"description": "Orders for specific date"
+								},
+								{
+									"key": "fields",
+									"value": "[\"name\",\"item\",\"quantity\",\"order_status\"]",
+									"description": "Summary fields"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product APIs (2 APIs)",
+			"item": [
+				{
+					"name": "8. Get Order Products & Quantities",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/resource/WhatsApp%20Order/{{test_order_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp Order",
+								"{{test_order_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "9. Get Product Summary for Date",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/resource/WhatsApp%20Order?filters=%5B%5B%22creation%22%2C%22between%22%2C%5B%22{{test_date}}%2000%3A00%3A00%22%2C%22{{test_date}}%2023%3A59%3A59%22%5D%5D%5D&fields=%5B%22item%22%2C%22quantity%22%5D",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp Order"
+							],
+							"query": [
+								{
+									"key": "filters",
+									"value": "[[\"creation\",\"between\",[\"{{test_date}} 00:00:00\",\"{{test_date}} 23:59:59\"]]]",
+									"description": "Orders for specific date"
+								},
+								{
+									"key": "fields",
+									"value": "[\"item\",\"quantity\"]",
+									"description": "Product summary fields"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Customer Management APIs (3 APIs)",
+			"item": [
+				{
+					"name": "10. Get Customer Orders",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/resource/WhatsApp%20Order?filters=%5B%5B%22phone_number%22%2C%22%3D%22%2C%22{{test_phone}}%22%5D%5D&fields=%5B%22name%22%2C%22customer_name%22%2C%22item%22%2C%22quantity%22%2C%22order_status%22%2C%22creation%22%5D",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp Order"
+							],
+							"query": [
+								{
+									"key": "filters",
+									"value": "[[\"phone_number\",\"=\",\"{{test_phone}}\"]]",
+									"description": "Filter by customer phone"
+								},
+								{
+									"key": "fields",
+									"value": "[\"name\",\"customer_name\",\"item\",\"quantity\",\"order_status\",\"creation\"]",
+									"description": "Order details"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "11. Get Order History (Paginated)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/resource/WhatsApp%20Order?filters=%5B%5B%22phone_number%22%2C%22%3D%22%2C%22{{test_phone}}%22%5D%5D&fields=%5B%22name%22%2C%22item%22%2C%22quantity%22%2C%22order_status%22%2C%22creation%22%5D&limit_page_length=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp Order"
+							],
+							"query": [
+								{
+									"key": "filters",
+									"value": "[[\"phone_number\",\"=\",\"{{test_phone}}\"]]",
+									"description": "Filter by customer phone"
+								},
+								{
+									"key": "fields",
+									"value": "[\"name\",\"item\",\"quantity\",\"order_status\",\"creation\"]",
+									"description": "Order details"
+								},
+								{
+									"key": "limit_page_length",
+									"value": "10",
+									"description": "Limit results"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "12. Search Orders",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/resource/WhatsApp%20Order?filters=%5B%5B%22item%22%2C%22like%22%2C%22%25pizza%25%22%5D%5D&fields=%5B%22name%22%2C%22customer_name%22%2C%22item%22%2C%22quantity%22%2C%22order_status%22%5D",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp Order"
+							],
+							"query": [
+								{
+									"key": "filters",
+									"value": "[[\"item\",\"like\",\"%pizza%\"]]",
+									"description": "Search by item name"
+								},
+								{
+									"key": "fields",
+									"value": "[\"name\",\"customer_name\",\"item\",\"quantity\",\"order_status\"]",
+									"description": "Search results"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Testing & Utility APIs",
+			"item": [
+				{
+					"name": "Test Order Creation",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/method/whatsapp_integration.api.test_order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"method",
+								"whatsapp_integration.api.test_order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Orders (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/resource/WhatsApp%20Order?fields=%5B%22name%22%2C%22customer_name%22%2C%22phone_number%22%2C%22item%22%2C%22quantity%22%2C%22order_status%22%2C%22creation%22%5D&limit_page_length=50",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"resource",
+								"WhatsApp Order"
+							],
+							"query": [
+								{
+									"key": "fields",
+									"value": "[\"name\",\"customer_name\",\"phone_number\",\"item\",\"quantity\",\"order_status\",\"creation\"]",
+									"description": "All order fields"
+								},
+								{
+									"key": "limit_page_length",
+									"value": "50",
+									"description": "Limit to 50 orders"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://totalwhatsapporder.local:8002",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "a83482f9033d39e:f1c1ab82164f22a",
+			"type": "string"
+		},
+		{
+			"key": "test_order_id",
+			"value": "WOR-2025-00011",
+			"type": "string"
+		},
+		{
+			"key": "test_phone",
+			"value": "254799999999",
+			"type": "string"
+		},
+		{
+			"key": "test_date",
+			"value": "2025-09-24",
+			"type": "string"
+		}
+	]
+}
