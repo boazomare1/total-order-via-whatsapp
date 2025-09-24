@@ -1,9 +1,9 @@
 [project]
 name = "whatsapp_integration"
 authors = [
-    { name = "Techsavanna Company Limited", email = "totalenergies@techsavanna.co.ke"}
+    { name = "TCL", email = "totalenergies@techsavanna.com"}
 ]
-description = "Whatsapp Integration with frappe"
+description = "Integrating Whatsapp with Erpnext"
 requires-python = ">=3.10"
 readme = "README.md"
 dynamic = ["version"]

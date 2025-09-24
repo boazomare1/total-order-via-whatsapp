@@ -1,6 +1,6 @@
 ### Whatsapp Integration
 
-Whatsapp Integration with frappe
+Integrating Whatsapp with Erpnext
 
 ### Installation
 

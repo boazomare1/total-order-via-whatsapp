@@ -1,8 +1,8 @@
 app_name = "whatsapp_integration"
 app_title = "Whatsapp Integration"
-app_publisher = "Techsavanna Company Limited"
-app_description = "Whatsapp Integration with frappe"
-app_email = "totalenergies@techsavanna.co.ke"
+app_publisher = "TCL"
+app_description = "Integrating Whatsapp with Erpnext"
+app_email = "totalenergies@techsavanna.com"
 app_license = "mit"
 
 # Apps
