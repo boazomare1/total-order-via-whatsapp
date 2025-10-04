@@ -31,7 +31,7 @@ Add your WhatsApp API credentials to `site_config.json`:
 ### 3. Start the Webhook Server
 ```bash
 cd apps/whatsapp_integration/whatsapp_integration
-python standalone_webhook.py
+python start_webhook.py
 ```
 
 ### 4. Configure Meta Developer Console
