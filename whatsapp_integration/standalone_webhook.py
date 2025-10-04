@@ -22,7 +22,7 @@ app = Flask(__name__)
 
 # WhatsApp API configuration
 WHATSAPP_PHONE_ID = "853129267877967"
-WHATSAPP_TOKEN = "EAAVkO0JZA4L8BPtOZBJiMsWvzXLEhd3WgeyhSKMhf9kiCTJKeEbke6yEbGwRzq9Aa0cEWoJPSjsWrRt0ZC79NArKXqd72fEVE0S4gHO0BX21RoZAiUXkIZC5AbZAFZBGhvFBUb3Pq7a5XqZACqfCnx6ZCikS4hgKCxBXSduGLJBqKjzxqjzZAMjSzsb4xT7lw7FgrNzvg5bnVGzI49tlCjpo2So1ZAjKUEQw86cX2dIf6tSogZDZD"
+WHATSAPP_TOKEN = "EAAVkO0JZA4L8BPjBjw05uJlESvq0gw0OFWMc3AL9YTRJ9atQ460vibrf1vNZCViXuEew5yvl75AZA9PQnifuiWABvlQUIG46mQyHXTFLZAQ7ISdzM96ZAB62QUjZAPqpyhyID5QPmCoSewqH6ZCCDPBvQw8QrEt7gPZCIXPK6NAjnTUHZBLimAhZC6eUiHTUxggPqrUytHujagSXudV0jAKNZBgIF52qoNZBoNzuACkD4ip6gwZDZD"
 WHATSAPP_API_URL = f"https://graph.facebook.com/v18.0/{WHATSAPP_PHONE_ID}/messages"
 
 # User state management for conversation flow
@@ -242,7 +242,9 @@ def process_incoming_message(from_phone, message_text):
         print(f"User state: {user_state['state']}, Data: {user_state['data']}")
         
         # Handle different user states
-        if user_state["state"] == "selecting_item":
+        if user_state["state"] == "selecting_category":
+            handle_category_selection(from_phone, message_text, user_state)
+        elif user_state["state"] == "selecting_item":
             handle_item_selection(from_phone, message_text, user_state)
         elif user_state["state"] == "selecting_variant":
             handle_variant_selection(from_phone, message_text, user_state)
@@ -250,6 +252,10 @@ def process_incoming_message(from_phone, message_text):
             handle_quantity_input(from_phone, message_text, user_state)
         elif user_state["state"] == "entering_address":
             handle_address_input(from_phone, message_text, user_state)
+        elif user_state["state"] == "adding_more":
+            handle_add_more_selection(from_phone, message_text, user_state)
+        elif user_state["state"] == "selecting_hose":
+            handle_hose_selection(from_phone, message_text, user_state)
         else:
             # Handle commands in idle state
             handle_main_commands(from_phone, message_text, user_state)
@@ -289,33 +295,17 @@ def handle_main_commands(from_phone, message_text, user_state):
 def show_main_menu(from_phone):
     """Show the main menu with categories"""
     menu_text = """
-🍕 *Welcome to Our Restaurant!*
+🔥 *Welcome to TotalEnergies LPG Service!*
 
-*Main Menu:*
+*Choose a category:*
 
-*🍕 PIZZAS*
-• 1. Margherita - KES 800
-• 2. Pepperoni - KES 950
-• 3. Hawaiian - KES 900
-• 4. BBQ Chicken - KES 1000
+*🔥 LPG CYLINDERS*
+• 1. LPG Cylinders
 
-*🍔 BURGERS*
-• 5. Classic Beef - KES 650
-• 6. Chicken Burger - KES 600
-• 7. Veggie Burger - KES 550
-
-*🍟 SIDES*
-• 8. French Fries - KES 300
-• 9. Chicken Wings - KES 700
-• 10. Onion Rings - KES 350
-
-*🥤 DRINKS*
-• 11. Soda (Coke/Pepsi) - KES 150
-• 12. Juice - KES 200
-• 13. Water - KES 100
+*🔧 LPG ACCESSORIES*
+• 2. LPG Accessories
 
 *Commands:*
-• Type *1-13* to select an item
 • Type *"My Orders"* to view your orders
 • Type *"Status [Order ID]"* to check order status
 • Type *"Reorder [Order ID]"* to reorder
@@ -325,58 +315,138 @@ def show_main_menu(from_phone):
     
     send_whatsapp_message(from_phone, menu_text)
     
-    # Set user state to selecting item
-    user_states[from_phone] = {"state": "selecting_item", "data": {}}
+    # Set user state to selecting category (preserve existing cart if any)
+    existing_cart = user_states.get(from_phone, {}).get("data", {}).get("cart", [])
+    user_states[from_phone] = {"state": "selecting_category", "data": {"cart": existing_cart}}
+
+def show_main_menu_with_cart(from_phone, user_state):
+    """Show main menu while preserving existing cart"""
+    cart = user_state["data"].get("cart", [])
+    cart_count = len(cart)
+    
+    menu_text = f"""
+🔥 *Welcome to TotalEnergies LPG Service!*
+
+🛒 *Current Cart: {cart_count} item(s)*
+
+*Choose a category:*
+
+*🔥 LPG CYLINDERS*
+• 1. LPG Cylinders
+
+*🔧 LPG ACCESSORIES*
+• 2. LPG Accessories
+
+*Commands:*
+• Type *"My Orders"* to view your orders
+• Type *"Status [Order ID]"* to check order status
+• Type *"Reorder [Order ID]"* to reorder
+
+*Payment:* Pay on delivery to *0742356449*
+    """
+    
+    send_whatsapp_message(from_phone, menu_text)
+    
+    # Set user state to selecting category but preserve cart
+    user_state["state"] = "selecting_category"
+    user_states[from_phone] = user_state
+
+def handle_category_selection(from_phone, message_text, user_state):
+    """Handle category selection"""
+    if message_text == "1":
+        user_state["current_category"] = "cylinder"
+        show_lpg_cylinders_menu(from_phone, user_state)
+    elif message_text == "2":
+        user_state["current_category"] = "accessory"
+        show_lpg_accessories_menu(from_phone, user_state)
+    else:
+        send_whatsapp_message(from_phone, "Please select 1 for LPG Cylinders or 2 for LPG Accessories")
+
+def show_lpg_cylinders_menu(from_phone, user_state):
+    """Show LPG cylinders menu"""
+    menu_text = """
+🔥 *LPG CYLINDERS*
+
+• 1. 6kg LPG Cylinder - KES 1,200
+• 2. 13kg LPG Cylinder - KES 2,400
+• 3. 22kg LPG Cylinder - KES 3,600
+• 4. 50kg LPG Cylinder - KES 7,200
+
+*Commands:*
+• Type *1-4* to select a cylinder
+• Type *"Back"* to go back to main menu
+    """
+    send_whatsapp_message(from_phone, menu_text)
+    user_state["state"] = "selecting_item"
+    user_states[from_phone] = user_state
+
+def show_lpg_accessories_menu(from_phone, user_state):
+    """Show LPG accessories menu"""
+    menu_text = """
+🔧 *LPG ACCESSORIES*
+
+• 1. LPG Regulator - KES 800
+• 2. LPG Hose (1.5m) - KES 300
+• 3. LPG Hose (3m) - KES 500
+• 4. LPG Burner - KES 1,500
+• 5. LPG Stove - KES 2,500
+• 6. LPG Safety Kit - KES 1,200
+
+*Commands:*
+• Type *1-6* to select an accessory
+• Type *"Back"* to go back to main menu
+    """
+    send_whatsapp_message(from_phone, menu_text)
+    user_state["state"] = "selecting_item"
+    user_states[from_phone] = user_state
 
 def handle_item_selection(from_phone, message_text, user_state):
     """Handle item selection"""
     message_lower = message_text.lower().strip()
     
-    # Menu items with variants
-    menu_items = {
-        "1": {"name": "Margherita Pizza", "price": 800, "variants": ["Small", "Medium", "Large"]},
-        "2": {"name": "Pepperoni Pizza", "price": 950, "variants": ["Small", "Medium", "Large"]},
-        "3": {"name": "Hawaiian Pizza", "price": 900, "variants": ["Small", "Medium", "Large"]},
-        "4": {"name": "BBQ Chicken Pizza", "price": 1000, "variants": ["Small", "Medium", "Large"]},
-        "5": {"name": "Classic Beef Burger", "price": 650, "variants": ["Single", "Double"]},
-        "6": {"name": "Chicken Burger", "price": 600, "variants": ["Regular", "Spicy"]},
-        "7": {"name": "Veggie Burger", "price": 550, "variants": ["Regular", "Deluxe"]},
-        "8": {"name": "French Fries", "price": 300, "variants": ["Small", "Large"]},
-        "9": {"name": "Chicken Wings", "price": 700, "variants": ["6 pieces", "12 pieces"]},
-        "10": {"name": "Onion Rings", "price": 350, "variants": ["Small", "Large"]},
-        "11": {"name": "Soda", "price": 150, "variants": ["Coke", "Pepsi", "Fanta"]},
-        "12": {"name": "Juice", "price": 200, "variants": ["Orange", "Apple", "Mango"]},
-        "13": {"name": "Water", "price": 100, "variants": ["500ml", "1L"]}
+    # Handle back command
+    if message_lower == "back":
+        show_main_menu(from_phone)
+        return
+    
+    # LPG Cylinder items
+    cylinder_items = {
+        "1": {"name": "6kg LPG Cylinder", "price": 1200, "variants": ["Standard"]},
+        "2": {"name": "13kg LPG Cylinder", "price": 2400, "variants": ["Standard"]},
+        "3": {"name": "22kg LPG Cylinder", "price": 3600, "variants": ["Standard"]},
+        "4": {"name": "50kg LPG Cylinder", "price": 7200, "variants": ["Standard"]}
     }
+    
+    # LPG Accessory items
+    accessory_items = {
+        "1": {"name": "LPG Regulator", "price": 800, "variants": ["Standard"]},
+        "2": {"name": "LPG Hose (1.5m)", "price": 300, "variants": ["Standard"]},
+        "3": {"name": "LPG Hose (3m)", "price": 500, "variants": ["Standard"]},
+        "4": {"name": "LPG Burner", "price": 1500, "variants": ["Standard"]},
+        "5": {"name": "LPG Stove", "price": 2500, "variants": ["Standard"]},
+        "6": {"name": "LPG Safety Kit", "price": 1200, "variants": ["Standard"]}
+    }
+    
+    # Determine which menu we're in based on current state
+    menu_items = {}
+    if "cylinder" in user_state.get("current_category", ""):
+        menu_items = cylinder_items
+    elif "accessory" in user_state.get("current_category", ""):
+        menu_items = accessory_items
     
     if message_text in menu_items:
         item = menu_items[message_text]
         
-        if len(item["variants"]) > 1:
-            # Show variants
-            variants_text = f"*{item['name']}* - KES {item['price']}\n\n*Select Variant:*\n"
-            for i, variant in enumerate(item["variants"], 1):
-                variants_text += f"• {i}. {variant}\n"
-            variants_text += "\nType the variant number (1, 2, etc.)"
-            
-            send_whatsapp_message(from_phone, variants_text)
-            
-            # Store item info and wait for variant selection
-            user_state["data"]["selected_item"] = item
-            user_state["state"] = "selecting_variant"
-            user_states[from_phone] = user_state
-            print(f"State changed to selecting_variant for {from_phone}")
-        else:
-            # No variants, proceed to quantity
-            user_state["data"]["selected_item"] = item
-            user_state["data"]["selected_variant"] = item["variants"][0]
-            user_state["state"] = "entering_quantity"
-            user_states[from_phone] = user_state
-            
-            send_whatsapp_message(from_phone, f"*{item['name']}* selected!\n\nHow many would you like? (Type a number)")
+        # Store selected item for quantity input
+        user_state["data"]["selected_item"] = item
+        user_state["data"]["selected_variant"] = item["variants"][0]
+        user_state["state"] = "entering_quantity"
+        user_states[from_phone] = user_state
+        
+        send_whatsapp_message(from_phone, f"*{item['name']}* selected!\n\nHow many would you like? (Type a number)")
     
     else:
-        send_whatsapp_message(from_phone, "Please select a valid item number (1-13) or type 'menu' to see the menu again.")
+        send_whatsapp_message(from_phone, "Please select a valid item number or type 'back' to go back.")
 
 def handle_variant_selection(from_phone, message_text, user_state):
     """Handle variant selection"""
@@ -403,47 +473,377 @@ def handle_quantity_input(from_phone, message_text, user_state):
     try:
         quantity = int(message_text)
         if quantity > 0:
-            user_state["data"]["quantity"] = quantity
-            user_state["state"] = "entering_address"
+            # Get selected item details
+            selected_item = user_state["data"]["selected_item"]
+            selected_variant = user_state["data"]["selected_variant"]
+            
+            # Initialize cart if not exists
+            if "cart" not in user_state["data"]:
+                user_state["data"]["cart"] = []
+            
+            # Check if item already exists in cart
+            existing_item_index = None
+            for i, cart_item in enumerate(user_state["data"]["cart"]):
+                if (cart_item["name"] == selected_item["name"] and 
+                    cart_item["variant"] == selected_variant):
+                    existing_item_index = i
+                    break
+            
+            if existing_item_index is not None:
+                # Update existing item quantity
+                existing_item = user_state["data"]["cart"][existing_item_index]
+                existing_item["quantity"] += quantity
+                existing_item["total"] = existing_item["price"] * existing_item["quantity"]
+                
+                send_whatsapp_message(from_phone, f"✅ Updated {selected_item['name']} quantity to {existing_item['quantity']}")
+            else:
+                # Add new item to cart
+                cart_item = {
+                    "name": selected_item["name"],
+                    "variant": selected_variant,
+                    "price": selected_item["price"],
+                    "quantity": quantity,
+                    "total": selected_item["price"] * quantity
+                }
+                user_state["data"]["cart"].append(cart_item)
+                send_whatsapp_message(from_phone, f"✅ Added {selected_item['name']} to your cart!")
+            
             user_states[from_phone] = user_state
             
-            # Check if this is a reorder
-            if "reorder_item" in user_state["data"]:
-                reorder_item = user_state["data"]["reorder_item"]
-                reorder_price = user_state["data"]["reorder_price"]
-                total_price = reorder_price * quantity
-                
-                confirm_text = f"""
-*Reorder Summary:*
-• Item: {reorder_item}
-• Quantity: {quantity}
-• Unit Price: KES {reorder_price}
-• Total: KES {total_price}
-
-*Please provide your delivery address:*
-(Include area, street name, and any landmarks)
-                """
-            else:
-                selected_item = user_state["data"]["selected_item"]
-                selected_variant = user_state["data"]["selected_variant"]
-                total_price = selected_item["price"] * quantity
-                
-                confirm_text = f"""
-*Order Summary:*
-• Item: {selected_item['name']} - {selected_variant}
-• Quantity: {quantity}
-• Unit Price: KES {selected_item['price']}
-• Total: KES {total_price}
-
-*Please provide your delivery address:*
-(Include area, street name, and any landmarks)
-                """
-            
-            send_whatsapp_message(from_phone, confirm_text)
+            # Show cart and ask if they want to add more
+            show_cart_and_ask_for_more(from_phone, user_state)
         else:
             send_whatsapp_message(from_phone, "Please enter a valid quantity (1 or more)")
     except ValueError:
         send_whatsapp_message(from_phone, "Please type a valid number for quantity.")
+
+def show_cart_and_ask_for_more(from_phone, user_state):
+    """Show current cart and ask if they want to add more items"""
+    cart = user_state["data"]["cart"]
+    total_amount = sum(item["total"] for item in cart)
+    
+    cart_text = f"🛒 *Your Cart ({len(cart)} items):*\n\n"
+    for i, item in enumerate(cart, 1):
+        cart_text += f"{i}. {item['name']} - {item['variant']}\n"
+        cart_text += f"   Qty: {item['quantity']} × KES {item['price']} = KES {item['total']}\n\n"
+    
+    cart_text += f"💰 *Total: KES {total_amount}*\n\n"
+    
+    # Smart cross-selling based on what's in cart
+    cross_sell_text = get_cross_sell_suggestions(cart)
+    
+    cart_text += f"*Would you like to add anything else?*\n\n"
+    cart_text += f"{cross_sell_text}\n\n"
+    cart_text += f"• Type *'Yes'* to browse all items\n"
+    cart_text += f"• Type *'Hose'* to add LPG Hose (1.5m or 3m)\n"
+    cart_text += f"• Type *'Regulator'* to add LPG Regulator\n"
+    cart_text += f"• Type *'Safety'* to add LPG Safety Kit\n"
+    cart_text += f"• Type *'Burner'* to add LPG Burner\n"
+    cart_text += f"• Type *'Stove'* to add LPG Stove\n"
+    cart_text += f"• Type *'No'* to proceed to checkout\n"
+    cart_text += f"• Type *'Remove [number]'* to remove an item"
+    
+    send_whatsapp_message(from_phone, cart_text)
+    user_state["state"] = "adding_more"
+    user_states[from_phone] = user_state
+
+def get_cross_sell_suggestions(cart):
+    """Get smart cross-selling suggestions based on cart contents"""
+    suggestions = []
+    
+    # Check if they have cylinders but no accessories
+    has_cylinder = any("cylinder" in item["name"].lower() for item in cart)
+    has_regulator = any("regulator" in item["name"].lower() for item in cart)
+    has_hose = any("hose" in item["name"].lower() for item in cart)
+    has_safety = any("safety" in item["name"].lower() for item in cart)
+    has_burner = any("burner" in item["name"].lower() for item in cart)
+    has_stove = any("stove" in item["name"].lower() for item in cart)
+    
+    if has_cylinder and not has_regulator:
+        suggestions.append("🔧 *Recommended:* LPG Regulator (KES 800)")
+    if has_cylinder and not has_hose:
+        suggestions.append("🔧 *Recommended:* LPG Hose (1.5m - KES 300, 3m - KES 500)")
+    if has_cylinder and not has_safety:
+        suggestions.append("🔧 *Recommended:* LPG Safety Kit (KES 1,200)")
+    if has_cylinder and not has_burner:
+        suggestions.append("🔧 *Recommended:* LPG Burner (KES 1,500)")
+    if has_cylinder and not has_stove:
+        suggestions.append("🔧 *Recommended:* LPG Stove (KES 2,500)")
+    
+    if suggestions:
+        return "💡 *Smart Suggestions:*\n" + "\n".join(suggestions)
+    else:
+        return "💡 *You might also like:* LPG Stove, LPG Burner, or Safety Kit"
+
+def handle_add_more_selection(from_phone, message_text, user_state):
+    """Handle add more items selection"""
+    message_lower = message_text.lower().strip()
+    
+    if message_lower == "yes":
+        # Go back to category selection but preserve cart
+        show_main_menu_with_cart(from_phone, user_state)
+    elif message_lower == "hose":
+        # Show hose options directly
+        show_hose_options(from_phone, user_state)
+    elif message_lower == "regulator":
+        # Add regulator directly
+        add_regulator_directly(from_phone, user_state)
+    elif message_lower == "safety":
+        # Add safety kit directly
+        add_safety_kit_directly(from_phone, user_state)
+    elif message_lower == "burner":
+        # Add burner directly
+        add_burner_directly(from_phone, user_state)
+    elif message_lower == "stove":
+        # Add stove directly
+        add_stove_directly(from_phone, user_state)
+    elif message_lower == "no":
+        # Proceed to checkout - ask for address
+        user_state["state"] = "entering_address"
+        user_states[from_phone] = user_state
+        
+        cart = user_state["data"]["cart"]
+        total_amount = sum(item["total"] for item in cart)
+        
+        checkout_text = f"✅ *Ready to Checkout!*\n\n"
+        checkout_text += f"🛒 *Final Order:*\n"
+        for item in cart:
+            checkout_text += f"• {item['name']} - {item['quantity']} × KES {item['price']} = KES {item['total']}\n"
+        checkout_text += f"\n💰 *Total: KES {total_amount}*\n\n"
+        checkout_text += f"*Please provide your delivery address:*\n"
+        checkout_text += f"(Include area, street name, and any landmarks)"
+        
+        send_whatsapp_message(from_phone, checkout_text)
+    elif message_lower.startswith("remove"):
+        # Handle item removal
+        try:
+            parts = message_lower.split()
+            if len(parts) > 1:
+                item_num = int(parts[1])
+                if 1 <= item_num <= len(user_state["data"]["cart"]):
+                    removed_item = user_state["data"]["cart"].pop(item_num - 1)
+                    send_whatsapp_message(from_phone, f"✅ Removed: {removed_item['name']}")
+                    show_cart_and_ask_for_more(from_phone, user_state)
+                else:
+                    send_whatsapp_message(from_phone, "Invalid item number. Please try again.")
+            else:
+                send_whatsapp_message(from_phone, "Please specify which item to remove. Example: 'Remove 1'")
+        except (ValueError, IndexError):
+            send_whatsapp_message(from_phone, "Invalid format. Use 'Remove 1', 'Remove 2', etc.")
+    else:
+        send_whatsapp_message(from_phone, "Please type 'Yes' to add more items, 'No' to checkout, or 'Remove [number]' to remove an item.")
+
+def show_hose_options(from_phone, user_state):
+    """Show hose length options directly"""
+    hose_text = """
+🔧 *LPG Hose Options*
+
+• 1. LPG Hose (1.5m) - KES 300
+• 2. LPG Hose (3m) - KES 500
+
+*Select length:*
+• Type *1* for 1.5m hose
+• Type *2* for 3m hose
+• Type *'Back'* to go back
+    """
+    send_whatsapp_message(from_phone, hose_text)
+    user_state["state"] = "selecting_hose"
+    user_states[from_phone] = user_state
+
+def add_regulator_directly(from_phone, user_state):
+    """Add regulator directly to cart"""
+    # Check if regulator already exists
+    existing_item_index = None
+    for i, cart_item in enumerate(user_state["data"]["cart"]):
+        if cart_item["name"] == "LPG Regulator":
+            existing_item_index = i
+            break
+    
+    if existing_item_index is not None:
+        # Update existing regulator quantity
+        existing_item = user_state["data"]["cart"][existing_item_index]
+        existing_item["quantity"] += 1
+        existing_item["total"] = existing_item["price"] * existing_item["quantity"]
+        send_whatsapp_message(from_phone, f"✅ Updated LPG Regulator quantity to {existing_item['quantity']}")
+    else:
+        # Add new regulator
+        regulator_item = {
+            "name": "LPG Regulator",
+            "variant": "Standard",
+            "price": 800,
+            "quantity": 1,
+            "total": 800
+        }
+        user_state["data"]["cart"].append(regulator_item)
+        send_whatsapp_message(from_phone, "✅ Added LPG Regulator to your cart!")
+    
+    user_states[from_phone] = user_state
+    show_cart_and_ask_for_more(from_phone, user_state)
+
+def add_safety_kit_directly(from_phone, user_state):
+    """Add safety kit directly to cart"""
+    # Check if safety kit already exists
+    existing_item_index = None
+    for i, cart_item in enumerate(user_state["data"]["cart"]):
+        if cart_item["name"] == "LPG Safety Kit":
+            existing_item_index = i
+            break
+    
+    if existing_item_index is not None:
+        # Update existing safety kit quantity
+        existing_item = user_state["data"]["cart"][existing_item_index]
+        existing_item["quantity"] += 1
+        existing_item["total"] = existing_item["price"] * existing_item["quantity"]
+        send_whatsapp_message(from_phone, f"✅ Updated LPG Safety Kit quantity to {existing_item['quantity']}")
+    else:
+        # Add new safety kit
+        safety_item = {
+            "name": "LPG Safety Kit",
+            "variant": "Standard",
+            "price": 1200,
+            "quantity": 1,
+            "total": 1200
+        }
+        user_state["data"]["cart"].append(safety_item)
+        send_whatsapp_message(from_phone, "✅ Added LPG Safety Kit to your cart!")
+    
+    user_states[from_phone] = user_state
+    show_cart_and_ask_for_more(from_phone, user_state)
+
+def add_burner_directly(from_phone, user_state):
+    """Add burner directly to cart"""
+    # Check if burner already exists
+    existing_item_index = None
+    for i, cart_item in enumerate(user_state["data"]["cart"]):
+        if cart_item["name"] == "LPG Burner":
+            existing_item_index = i
+            break
+    
+    if existing_item_index is not None:
+        # Update existing burner quantity
+        existing_item = user_state["data"]["cart"][existing_item_index]
+        existing_item["quantity"] += 1
+        existing_item["total"] = existing_item["price"] * existing_item["quantity"]
+        send_whatsapp_message(from_phone, f"✅ Updated LPG Burner quantity to {existing_item['quantity']}")
+    else:
+        # Add new burner
+        burner_item = {
+            "name": "LPG Burner",
+            "variant": "Standard",
+            "price": 1500,
+            "quantity": 1,
+            "total": 1500
+        }
+        user_state["data"]["cart"].append(burner_item)
+        send_whatsapp_message(from_phone, "✅ Added LPG Burner to your cart!")
+    
+    user_states[from_phone] = user_state
+    show_cart_and_ask_for_more(from_phone, user_state)
+
+def add_stove_directly(from_phone, user_state):
+    """Add stove directly to cart"""
+    # Check if stove already exists
+    existing_item_index = None
+    for i, cart_item in enumerate(user_state["data"]["cart"]):
+        if cart_item["name"] == "LPG Stove":
+            existing_item_index = i
+            break
+    
+    if existing_item_index is not None:
+        # Update existing stove quantity
+        existing_item = user_state["data"]["cart"][existing_item_index]
+        existing_item["quantity"] += 1
+        existing_item["total"] = existing_item["price"] * existing_item["quantity"]
+        send_whatsapp_message(from_phone, f"✅ Updated LPG Stove quantity to {existing_item['quantity']}")
+    else:
+        # Add new stove
+        stove_item = {
+            "name": "LPG Stove",
+            "variant": "Standard",
+            "price": 2500,
+            "quantity": 1,
+            "total": 2500
+        }
+        user_state["data"]["cart"].append(stove_item)
+        send_whatsapp_message(from_phone, "✅ Added LPG Stove to your cart!")
+    
+    user_states[from_phone] = user_state
+    show_cart_and_ask_for_more(from_phone, user_state)
+
+def handle_hose_selection(from_phone, message_text, user_state):
+    """Handle hose length selection"""
+    message_lower = message_text.lower().strip()
+    
+    if message_lower == "back":
+        show_cart_and_ask_for_more(from_phone, user_state)
+        return
+    
+    if message_text == "1":
+        # Add/update 1.5m hose
+        hose_name = "LPG Hose (1.5m)"
+        hose_price = 300
+        
+        # Check if this hose already exists
+        existing_item_index = None
+        for i, cart_item in enumerate(user_state["data"]["cart"]):
+            if cart_item["name"] == hose_name:
+                existing_item_index = i
+                break
+        
+        if existing_item_index is not None:
+            # Update existing hose quantity
+            existing_item = user_state["data"]["cart"][existing_item_index]
+            existing_item["quantity"] += 1
+            existing_item["total"] = existing_item["price"] * existing_item["quantity"]
+            send_whatsapp_message(from_phone, f"✅ Updated {hose_name} quantity to {existing_item['quantity']}")
+        else:
+            # Add new hose
+            hose_item = {
+                "name": hose_name,
+                "variant": "Standard",
+                "price": hose_price,
+                "quantity": 1,
+                "total": hose_price
+            }
+            user_state["data"]["cart"].append(hose_item)
+            send_whatsapp_message(from_phone, f"✅ Added {hose_name} to your cart!")
+        
+        user_states[from_phone] = user_state
+        show_cart_and_ask_for_more(from_phone, user_state)
+    elif message_text == "2":
+        # Add/update 3m hose
+        hose_name = "LPG Hose (3m)"
+        hose_price = 500
+        
+        # Check if this hose already exists
+        existing_item_index = None
+        for i, cart_item in enumerate(user_state["data"]["cart"]):
+            if cart_item["name"] == hose_name:
+                existing_item_index = i
+                break
+        
+        if existing_item_index is not None:
+            # Update existing hose quantity
+            existing_item = user_state["data"]["cart"][existing_item_index]
+            existing_item["quantity"] += 1
+            existing_item["total"] = existing_item["price"] * existing_item["quantity"]
+            send_whatsapp_message(from_phone, f"✅ Updated {hose_name} quantity to {existing_item['quantity']}")
+        else:
+            # Add new hose
+            hose_item = {
+                "name": hose_name,
+                "variant": "Standard",
+                "price": hose_price,
+                "quantity": 1,
+                "total": hose_price
+            }
+            user_state["data"]["cart"].append(hose_item)
+            send_whatsapp_message(from_phone, f"✅ Added {hose_name} to your cart!")
+        
+        user_states[from_phone] = user_state
+        show_cart_and_ask_for_more(from_phone, user_state)
+    else:
+        send_whatsapp_message(from_phone, "Please select 1 for 1.5m hose, 2 for 3m hose, or 'back' to go back.")
 
 def handle_address_input(from_phone, message_text, user_state):
     """Handle delivery address input"""
@@ -453,11 +853,62 @@ def handle_address_input(from_phone, message_text, user_state):
     
     user_state["data"]["delivery_address"] = message_text.strip()
     
-    # Create the order
-    create_complete_order(from_phone, user_state)
+    # Create the order with cart items
+    create_complete_cart_order(from_phone, user_state)
     
     # Reset user state
     user_states[from_phone] = {"state": "idle", "data": {}}
+
+def create_complete_cart_order(from_phone, user_state):
+    """Create a complete order from cart items"""
+    try:
+        cart = user_state["data"]["cart"]
+        delivery_address = user_state["data"]["delivery_address"]
+        
+        if not cart:
+            send_whatsapp_message(from_phone, "Your cart is empty. Please add items first.")
+            return
+        
+        # Calculate total
+        total_amount = sum(item["total"] for item in cart)
+        
+        # Create order description
+        order_items = []
+        for item in cart:
+            order_items.append(f"{item['name']} - {item['quantity']} × KES {item['price']}")
+        
+        order_description = " | ".join(order_items)
+        
+        # Create order in ERPNext
+        order_id = create_erpnext_order(from_phone, order_description, 1, total_amount, total_amount, delivery_address)
+        
+        # Send confirmation
+        confirmation_text = f"""
+✅ *Order Confirmed!*
+
+*Order Details:*
+• Order ID: {order_id}
+• Items: {order_description}
+• Total: KES {total_amount}
+• Delivery Address: {delivery_address}
+
+*Payment Instructions:*
+Pay KES {total_amount} on delivery to:
+📱 *0742356449*
+
+*Order Status:* Pending
+We'll notify you when your order is being prepared!
+
+*Commands:*
+• Type *"My Orders"* to view all orders
+• Type *"Status {order_id}"* to check this order
+        """
+        
+        send_whatsapp_message(from_phone, confirmation_text)
+        
+    except Exception as e:
+        print(f"Error creating complete cart order: {str(e)}")
+        send_whatsapp_message(from_phone, "Sorry, there was an error creating your order. Please try again.")
 
 def create_complete_order(from_phone, user_state):
     """Create a complete order from user state"""
