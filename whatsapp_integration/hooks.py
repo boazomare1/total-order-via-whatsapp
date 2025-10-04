@@ -209,6 +209,14 @@ app_license = "mit"
 # Automatically update python controller files with all translated strings
 # get_translated_strings = "whatsapp_integration.utils.get_translated_strings"
 
+# Custom Routes
+# -------------
+website_route_rules = [
+	{"from_route": "/webhook", "to_route": "whatsapp_integration.www.webhook_plain.get_context"},
+	{"from_route": "/meta-webhook", "to_route": "whatsapp_integration.www.webhook_plain.get_context"},
+	{"from_route": "/test-webhook", "to_route": "whatsapp_integration.www.test_webhook.get_context"}
+]
+
 # WhatsApp API endpoints
 # ---------------------
 override_whitelisted_methods = {

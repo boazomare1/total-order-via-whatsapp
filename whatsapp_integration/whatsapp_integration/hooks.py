@@ -1,9 +1,15 @@
+# WhatsApp Integration Hooks
+
+from . import __version__
+
 app_name = "whatsapp_integration"
-app_title = "Whatsapp Integration"
-app_publisher = "TCL"
-app_description = "Integrating Whatsapp with Erpnext"
-app_email = "totalenergies@techsavanna.com"
-app_license = "mit"
+app_title = "WhatsApp Integration"
+app_publisher = "Your Name"
+app_description = "WhatsApp Business API Integration for ERPNext"
+app_icon = "octicon octicon-file-directory"
+app_color = "grey"
+app_email = "your@email.com"
+app_license = "MIT"
 
 # Includes in <head>
 # ------------------
@@ -16,7 +22,7 @@ app_license = "mit"
 # web_include_css = "/assets/whatsapp_integration/css/whatsapp_integration.css"
 # web_include_js = "/assets/whatsapp_integration/js/whatsapp_integration.js"
 
-# include custom scss in every website theme (without file extension ".scss")
+# include custom scss in every website theme (without file extension)
 # website_theme_scss = "whatsapp_integration/public/scss/website"
 
 # include js, css files in header of web form
@@ -47,7 +53,7 @@ app_license = "mit"
 # ----------
 
 # automatically create page for each record of this doctype
-# website_generators = ["Web Page"]
+# website_generators = ["Webpage"]
 
 # Jinja
 # ----------
@@ -65,7 +71,7 @@ app_license = "mit"
 # after_install = "whatsapp_integration.install.after_install"
 
 # Uninstallation
-# --------------
+# ------------
 
 # before_uninstall = "whatsapp_integration.uninstall.before_uninstall"
 # after_uninstall = "whatsapp_integration.uninstall.after_uninstall"
@@ -152,20 +158,6 @@ app_license = "mit"
 #
 # auto_cancel_exempted_doctypes = ["Auto Repeat"]
 
-# Ignore links to specified DocTypes when deleting documents
-# -----------------------------------------------------------
-
-# ignore_links_on_delete = ["Communication", "ToDo"]
-
-# Request Events
-# ----------------
-# before_request = ["whatsapp_integration.utils.before_request"]
-# after_request = ["whatsapp_integration.utils.after_request"]
-
-# Job Events
-# ----------
-# before_job = ["whatsapp_integration.utils.before_job"]
-# after_job = ["whatsapp_integration.utils.after_job"]
 
 # User Data Protection
 # --------------------
@@ -197,37 +189,3 @@ app_license = "mit"
 # auth_hooks = [
 #	"whatsapp_integration.auth.validate"
 # ]
-
-# Translation
-# --------------------------------
-
-# Make link fields search translated document names for these DocTypes
-# Recommended only for DocTypes which have limited documents with untranslated names
-# For example: Role, Gender, etc.
-# translated_search_doctypes = []
-
-# Automatically update python controller files with all translated strings
-# get_translated_strings = "whatsapp_integration.utils.get_translated_strings"
-
-# WhatsApp API endpoints
-# ---------------------
-override_whitelisted_methods = {
-	# Core WhatsApp functionality
-	"whatsapp_integration.api.whatsapp_webhook": "whatsapp_integration.api.whatsapp_webhook",
-	"whatsapp_integration.api.test_order": "whatsapp_integration.api.test_order",
-	"whatsapp_integration.api.simulate_whatsapp_conversation": "whatsapp_integration.api.simulate_whatsapp_conversation",
-	"whatsapp_integration.api.get_menu": "whatsapp_integration.api.get_menu",
-	
-	# Customer Order Management APIs
-	"whatsapp_integration.api.get_customer_orders": "whatsapp_integration.api.get_customer_orders",
-	"whatsapp_integration.api.get_order_status": "whatsapp_integration.api.get_order_status",
-	"whatsapp_integration.api.update_order_status": "whatsapp_integration.api.update_order_status",
-	"whatsapp_integration.api.cancel_order": "whatsapp_integration.api.cancel_order",
-	"whatsapp_integration.api.get_order_history": "whatsapp_integration.api.get_order_history",
-	"whatsapp_integration.api.search_orders": "whatsapp_integration.api.search_orders",
-	
-	# Date and Product APIs
-	"whatsapp_integration.api.get_orders_by_date": "whatsapp_integration.api.get_orders_by_date",
-	"whatsapp_integration.api.get_order_products": "whatsapp_integration.api.get_order_products",
-	"whatsapp_integration.api.get_daily_order_summary": "whatsapp_integration.api.get_daily_order_summary"
-}

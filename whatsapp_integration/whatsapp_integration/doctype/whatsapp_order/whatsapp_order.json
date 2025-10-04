@@ -21,10 +21,7 @@
   "currency",
   "total_price",
   "delivery_address",
-  "order_status",
-  "column_break_7",
-  "created_at",
-  "updated_at"
+  "order_status"
  ],
  "fields": [
   {
@@ -113,22 +110,6 @@
    "options": "Pending\nConfirmed\nPreparing\nOut for Delivery\nDelivered\nCancelled",
    "default": "Pending",
    "in_list_view": 1
-  },
-  {
-   "fieldname": "column_break_7",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "created_at",
-   "fieldtype": "Datetime",
-   "label": "Created At",
-   "read_only": 1
-  },
-  {
-   "fieldname": "updated_at",
-   "fieldtype": "Datetime",
-   "label": "Updated At",
-   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,

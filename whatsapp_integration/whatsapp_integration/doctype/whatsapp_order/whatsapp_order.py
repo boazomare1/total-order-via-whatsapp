@@ -7,12 +7,15 @@ from datetime import datetime
 
 class WhatsAppOrder(Document):
     def before_save(self):
-        # Set created_at timestamp if not set
-        if not self.created_at:
-            self.created_at = datetime.now()
-
-        # Always update the updated_at timestamp
-        self.updated_at = datetime.now()
+        # Store the old status for comparison
+        if self.name:  # If document exists (not new)
+            try:
+                old_doc = frappe.get_doc("WhatsApp Order", self.name)
+                self._doc_before_save = {"order_status": old_doc.order_status}
+            except:
+                self._doc_before_save = None
+        else:
+            self._doc_before_save = None
 
         # Calculate total_price if unit_price and quantity are available
         if self.unit_price and self.quantity:
@@ -21,9 +24,77 @@ class WhatsAppOrder(Document):
             self.total_price = 0
 
     def on_update(self):
-        # You can add any logic here that should run after the document is updated
-        # e.g., update stock if order status changes to 'Cancelled'
-        pass
+        # Check if order status has changed and send WhatsApp notification
+        if hasattr(self, '_doc_before_save') and self._doc_before_save:
+            old_status = self._doc_before_save.get('order_status')
+            new_status = self.order_status
+            
+            if old_status != new_status:
+                self.send_status_notification(old_status, new_status)
+    
+    def send_status_notification(self, old_status, new_status):
+        """Send WhatsApp notification when order status changes"""
+        try:
+            import requests
+            
+            # Status messages
+            status_messages = {
+                "Confirmed": "✅ Your order has been confirmed and is being prepared!",
+                "Preparing": "👨‍🍳 Your order is being prepared! It will be ready soon.",
+                "Out for Delivery": "🚚 Your order is out for delivery! Our driver is on the way.",
+                "Delivered": "🎉 Your order has been delivered! Enjoy your meal!",
+                "Cancelled": "❌ Your order has been cancelled. Please contact us if you have any questions."
+            }
+            
+            # Get message for new status
+            message = status_messages.get(new_status, f"Your order status has been updated to: {new_status}")
+            
+            # Create notification message
+            notification_text = f"""
+*Order Status Update*
+
+Order ID: {self.name}
+Item: {self.item}
+Quantity: {self.quantity}
+Total: KES {self.total_price}
+
+Status: {old_status} → {new_status}
+
+{message}
+
+*Payment:* Pay on delivery to *0742356449*
+            """
+            
+            # Send WhatsApp message
+            phone_id = frappe.conf.get("whatsapp_phone_id")
+            access_token = frappe.conf.get("whatsapp_token")
+            
+            if phone_id and access_token and self.phone_number:
+                url = f"https://graph.facebook.com/v22.0/{phone_id}/messages"
+                
+                headers = {
+                    "Authorization": f"Bearer {access_token}",
+                    "Content-Type": "application/json"
+                }
+                
+                data = {
+                    "messaging_product": "whatsapp",
+                    "to": self.phone_number,
+                    "type": "text",
+                    "text": {"body": notification_text}
+                }
+                
+                response = requests.post(url, headers=headers, json=data)
+                
+                if response.status_code == 200:
+                    frappe.logger().info(f"Status notification sent to {self.phone_number} for order {self.name}")
+                else:
+                    frappe.logger().error(f"Failed to send status notification: {response.text}")
+            else:
+                frappe.logger().error("WhatsApp credentials not configured or phone number missing")
+                
+        except Exception as e:
+            frappe.logger().error(f"Error sending status notification: {str(e)}")
 
     def validate(self):
         # Validate phone number format (basic validation)
